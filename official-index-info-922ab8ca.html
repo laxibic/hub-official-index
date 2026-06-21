@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pg模拟器 · 资料与索引介绍</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f0eb;
+            font-family: 'Georgia', 'Times New Roman', 'Noto Serif SC', serif;
+            color: #2c2a28;
+            line-height: 1.7;
+            padding: 2.5rem 1.2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* 主视觉卡片 —— 文章式引言 */
+        .hero-card {
+            background: #faf6f1;
+            border: 1px solid #e5ddd5;
+            padding: 2.2rem 2.5rem;
+            margin-bottom: 2.8rem;
+            border-radius: 20px 8px 20px 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .hero-card h1 {
+            font-size: 2.4rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            color: #1d1b19;
+            margin-bottom: 0.8rem;
+            border-left: 6px solid #b7a99a;
+            padding-left: 1rem;
+        }
+
+        .hero-card p {
+            font-size: 1.05rem;
+            color: #4a4540;
+            margin-top: 0.6rem;
+            text-indent: 2em;
+        }
+
+        .hero-card .highlight {
+            background: #e9dfd3;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-style: normal;
+        }
+
+        /* 信息卡片网格 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            margin: 2.5rem 0 2.2rem;
+        }
+
+        @media (max-width: 700px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-card h1 {
+                font-size: 1.9rem;
+            }
+            body {
+                padding: 1.5rem 0.9rem;
+            }
+        }
+
+        .info-card {
+            background: #fcf9f5;
+            border: 1px solid #e0d7cf;
+            border-radius: 16px 4px 16px 4px;
+            padding: 1.6rem 1.8rem;
+            box-shadow: 0 2px 6px rgba(110, 90, 70, 0.04);
+            transition: box-shadow 0.15s;
+        }
+
+        .info-card:hover {
+            box-shadow: 0 6px 14px rgba(80, 60, 40, 0.06);
+        }
+
+        .info-card h2 {
+            font-size: 1.4rem;
+            font-weight: 400;
+            border-bottom: 1px dashed #d5cbc0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            color: #33302c;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-card li {
+            padding: 0.3rem 0 0.3rem 1.2rem;
+            position: relative;
+            color: #3f3b36;
+        }
+
+        .info-card li::before {
+            content: "·";
+            position: absolute;
+            left: 0;
+            color: #a09080;
+            font-weight: bold;
+        }
+
+        .info-card .tag {
+            display: inline-block;
+            background: #ede6dd;
+            padding: 0.1rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #4d453e;
+            margin-top: 0.6rem;
+        }
+
+        /* 引用块 / 提示框 */
+        .callout {
+            background: #f3ede5;
+            border-left: 6px solid #b7a797;
+            padding: 1.3rem 1.8rem;
+            margin: 2rem 0 2.2rem;
+            border-radius: 0 12px 12px 0;
+            color: #2f2b27;
+            font-style: normal;
+        }
+
+        .callout strong {
+            font-weight: 600;
+            color: #1f1c18;
+        }
+
+        /* 自然段落与链接嵌入 */
+        .prose-block {
+            margin: 1.8rem 0 1.2rem;
+            padding: 0 0.2rem;
+        }
+
+        .prose-block p {
+            margin: 1rem 0;
+            text-indent: 2em;
+        }
+
+        .prose-block a {
+            color: #6f5b4a;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            text-decoration-color: #cbb9a8;
+            font-weight: 400;
+            transition: color 0.1s;
+        }
+
+        .prose-block a:hover {
+            color: #3f2f22;
+            text-decoration-color: #8f7a67;
+        }
+
+        /* FAQ 摘要简洁风格 */
+        .faq-mini {
+            margin: 2.4rem 0 1.5rem;
+            padding: 0 0.5rem;
+        }
+
+        .faq-mini details {
+            border-bottom: 1px solid #ddd5cb;
+            padding: 0.8rem 0;
+        }
+
+        .faq-mini summary {
+            font-weight: 500;
+            color: #38332e;
+            cursor: pointer;
+            padding: 0.3rem 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .faq-mini summary::before {
+            content: "▸";
+            margin-right: 0.6rem;
+            color: #b2a18f;
+            transition: 0.1s;
+        }
+
+        .faq-mini details[open] summary::before {
+            content: "▾";
+        }
+
+        .faq-mini .answer {
+            padding: 0.6rem 0 0.3rem 1.5rem;
+            color: #4f4942;
+            font-size: 0.95rem;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #ddd5cb;
+            margin: 2rem 0;
+        }
+
+        .footer-note {
+            text-align: center;
+            color: #8a7f73;
+            font-size: 0.8rem;
+            margin-top: 3rem;
+            letter-spacing: 0.3px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 主视觉——文章式引言卡片 -->
+    <div class="hero-card">
+        <h1>从资料整理到信息索引</h1>
+        <p>
+            围绕<span class="highlight">pg模拟器</span>这一关键词，资料往往散落在不同笔记、论坛和私人收藏中。
+            这里尝试将零散的信息做一次梳理，不追求百科全书式的覆盖，而是像卡片盒一样，
+            把几条值得留意的线索放在一起，供翻阅和对照。
+        </p>
+    </div>
+
+    <!-- 用途卡片 + 适合人群卡片 (并排) -->
+    <div class="card-grid">
+        <div class="info-card">
+            <h2>几种常见用途</h2>
+            <ul>
+                <li>本地运行早期 pg 环境，做功能验证与测试</li>
+                <li>离线查阅旧版资料或特定版本行为</li>
+                <li>在隔离环境中模拟配置与调试流程</li>
+                <li>作为教学演示的沙箱，不干扰主力系统</li>
+            </ul>
+            <span class="tag">用途索引</span>
+        </div>
+
+        <div class="info-card">
+            <h2>适合的人群</h2>
+            <ul>
+                <li>需要对比不同 pg 版本行为的开发者</li>
+                <li>希望搭建本地学习环境的爱好者</li>
+                <li>写文档或教程时做截图的记录者</li>
+                <li>对数据库内部行为感兴趣的探索者</li>
+            </ul>
+            <span class="tag">人群参考</span>
+        </div>
+    </div>
+
+    <!-- 自然链接段落 —— 嵌入 pg模拟器 -->
+    <div class="prose-block">
+        <p>
+            如果你正在寻找一个可以反复搭建、拆解和测试的环境，把资料整理成自己的笔记，
+            那么不妨将 <a href="https://official-index-pg.com">pg模拟器</a> 看作一个起点。
+            它不算大而全的文档中心，更像是一个索引站，收集了一些散落的线索。
+        </p>
+        <p>
+            翻阅的时候，建议先明确你自己的场景：是做版本对比，还是写一段教程，或者只是想在本地安静地跑一遍流程。
+            带着一个具体问题去翻阅，往往比漫无目的地浏览更有效率。每一条记录背后都可能连着另一组细节，
+            卡片式罗列的目的是减少查找成本，让你更快定位到感兴趣的方向。
+        </p>
+    </div>
+
+    <!-- 引用块 / 提示框 -->
+    <div class="callout">
+        <strong>一点小提示：</strong> 模拟环境的价值往往在反复使用之后才显现。
+        不必追求一次性了解所有功能，把重点放在：你此刻需要模拟什么、验证什么。
+        剩下的可以慢慢补充。
+    </div>
+
+    <!-- FAQ 摘要 (简洁) -->
+    <div class="faq-mini">
+        <details>
+            <summary>这个页面和 pg模拟器 是什么关系？</summary>
+            <div class="answer">
+                它是围绕 <a href="https://official-index-pg.com">pg模拟器</a> 建立的一个信息索引页，
+                用卡片和段落把常见用法、适合人群和背景资料整理在一起。页面本身不托管模拟器，只做资料的指引与梳理。
+            </div>
+        </details>
+        <details>
+            <summary>信息从哪里来？</summary>
+            <div class="answer">
+                主要来自公开文档、社区讨论以及个人实验中的记录。每一条都尽量保持客观，
+                并保留可追溯的上下文。如果你发现遗漏或偏差，欢迎补充。
+            </div>
+        </details>
+        <details>
+            <summary>卡片里的内容会更新吗？</summary>
+            <div class="answer">
+                卡片内容随资料整理阶段而变化，但不会频繁改动。如果你需要最新的运行细节，
+                建议结合 <a href="https://official-index-pg.com">pg模拟器</a> 上的记录对照参考。
+            </div>
+        </details>
+    </div>
+
+    <hr>
+
+    <div class="footer-note">
+        资料卡片 · 索引风格 · 内容保持克制
+    </div>
+
+</body>
+</html>
